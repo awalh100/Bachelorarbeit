@@ -20,9 +20,9 @@ public class GreedyAlgorithmus{
     double[][] originaleAuslastung = auslastungGenerieren(mitarbeiter, aufgaben);
     double[][] auslastung = new double[mitarbeiter][aufgaben];
     double[][] letzteAuslastung = new double[mitarbeiter][aufgaben];
-    double[][] gesamteAuslastung = new double[mitarbeiter][aufgaben];
-    double[] angesammlteArbeit = new double[aufgaben];
+    double[][] gesmteAuslastung = new double[mitarbeiter][aufgaben];
 
+    double maximaleAuslastung =0;
 
 
     for (int tag = 1; tag <= tage; tag++) {
@@ -47,6 +47,19 @@ public class GreedyAlgorithmus{
 
       System.out.println("Auslastungsmatrix vor der Zuweisung ( Tag"+ tag+"):");
       auslastungAusgaben(auslastung, mitarbeiter, aufgaben);
+
+      double [][] vorZuweisung = new double[mitarbeiter][aufgaben];
+      for (int i =0; i< mitarbeiter; i++){
+        vorZuweisung[i]= auslastung[i].clone();
+      }
+
+      double maximaleAuslastungTag= berechneMaximaleAuslastung(auslastung);
+
+      if (maximaleAuslastungTag > maximaleAuslastung){
+        maximaleAuslastung= maximaleAuslastungTag;
+
+      }
+
       boolean[] aufgabeZuweisen = new boolean[aufgaben];
 
       for (int arbeiter = 0; arbeiter < mitarbeiter; arbeiter++) {
@@ -64,7 +77,7 @@ public class GreedyAlgorithmus{
 
         if (bevorzugteAufgabe != -1) {
           aufgabeZuweisen[bevorzugteAufgabe] = true;
-          // angesammlteArbeit[bevorzugteAufgabe] += 1.0;
+
           System.out.println(
               "[*] Arbeiter " + (arbeiter + 1) + " -> Aufgabe " + (bevorzugteAufgabe + 1) +
                   " (Gewicht: " + String.format("%.3f", maxAuslastung) + ")");
@@ -82,15 +95,18 @@ public class GreedyAlgorithmus{
       for (int i = 0; i < mitarbeiter; i++){
         letzteAuslastung[i]= auslastung[i].clone();
       }
-      /*for (int arbeiter = 0; arbeiter < mitarbeiter; arbeiter++) {
-        for (int aufgabe = 0; aufgabe < aufgaben; aufgabe++) {
-          gesamteAuslastung[arbeiter][aufgabe] += auslastung[arbeiter][aufgabe];
+      for (int i =0; i < mitarbeiter; i++){
+        for (int j =0; j < aufgaben; j++){
+          gesmteAuslastung[i][j] += auslastung[i][j];
         }
-      }*/
+      }
+
+      System.out.println();
 
       System.out.println();
     }
 
+    System.out.println("die Maximale Auslastung:" + String.format("%.3f", maximaleAuslastung));
 
   }
 
@@ -109,7 +125,18 @@ public class GreedyAlgorithmus{
     }
     System.out.println();
   }
-  // Methode zum Generieren der Auslastungsmatrix
+
+  public static double berechneMaximaleAuslastung(double[][]auslastung){
+    double maxAuslatung = 0;
+    for (int i=0; i<auslastung.length; i++){
+      for (int j =0; j < auslastung[i].length; j ++){
+        if (auslastung[i][j] > maxAuslatung){
+          maxAuslatung= auslastung[i][j];
+        }
+      }
+    }
+    return maxAuslatung;
+  }
   public static double[][] auslastungGenerieren(int mitarbeiter, int aufgaben) {
     Random random = new Random();
     double[][] auslastung = new double[mitarbeiter][aufgaben];
@@ -122,14 +149,14 @@ public class GreedyAlgorithmus{
         summe += auslastung[arbeiter][aufgabe];
       }
 
-      // Normalisierung der Zeile (jedes Element in der Zeile durch die Zeilensumme teilen)
+
       for (int arbeiter = 0; arbeiter < mitarbeiter; arbeiter++) {
         auslastung[arbeiter][aufgabe] /= summe;
       }
     }
 
     // Iteration zur Normalisierung der Spalten
-    for (int iteration = 0; iteration < 10; iteration++) {  // Wiederhole 10 Mal für Präzision
+    for (int iteration = 0; iteration < 10; iteration++) {
       // Spalten normalisieren
       for (int aufgabe = 0; aufgabe < aufgaben; aufgabe++) {
         double summeSpalte = 0.0;
@@ -152,6 +179,8 @@ public class GreedyAlgorithmus{
         }
       }
     }
+
     return auslastung;
   }
+
 }
