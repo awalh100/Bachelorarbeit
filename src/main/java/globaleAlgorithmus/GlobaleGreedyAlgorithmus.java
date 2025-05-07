@@ -1,8 +1,9 @@
-package com.example.bachelorarbeit;
+package globaleAlgorithmus;
+
 import java.util.Random;
 import java.util.Scanner;
 
-public class GreedyAlgorithmus{
+public class GlobaleGreedyAlgorithmus {
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
 
@@ -36,12 +37,12 @@ public class GreedyAlgorithmus{
           auslastung[i] = originaleAuslastung[i].clone();
         }
       }else{
-          for (int i =0; i< mitarbeiter; i++){
-            for (int j =0; j< aufgaben; j++){
-              auslastung[i][j] = letzteAuslastung[i][j] + originaleAuslastung[i][j];
-            }
+        for (int i =0; i< mitarbeiter; i++){
+          for (int j =0; j< aufgaben; j++){
+            auslastung[i][j] = letzteAuslastung[i][j] + originaleAuslastung[i][j];
           }
         }
+      }
 
 
 
@@ -61,35 +62,40 @@ public class GreedyAlgorithmus{
       }
 
       boolean[] aufgabeZuweisen = new boolean[aufgaben];
+      boolean[] mitarbeiterZuweisen = new boolean[mitarbeiter];
 
       for (int arbeiter = 0; arbeiter < mitarbeiter; arbeiter++) {
         int bevorzugteAufgabe = -1;
-        double maxAuslastung = -1;
+        int bevorzugterMitarbeiter =-1;
+        double maxWert = -1;
 
-
-        for (int aufgabe = 0; aufgabe < aufgaben; aufgabe++) {
-          if (!aufgabeZuweisen[aufgabe] && auslastung[arbeiter][aufgabe] > maxAuslastung) {
-            maxAuslastung = auslastung[arbeiter][aufgabe];
-            bevorzugteAufgabe = aufgabe;
+        for (int i=0; i<mitarbeiter;i++) {
+          if (mitarbeiterZuweisen[i]) continue;
+          for (int aufgabe = 0; aufgabe < aufgaben; aufgabe++) {
+            if (!aufgabeZuweisen[aufgabe] && auslastung[i][aufgabe] > maxWert) {
+              maxWert = auslastung[i][aufgabe];
+              bevorzugteAufgabe = aufgabe;
+              bevorzugterMitarbeiter =i;
+            }
           }
+
         }
 
-
-        if (bevorzugteAufgabe != -1) {
-          aufgabeZuweisen[bevorzugteAufgabe] = true;
+        if (bevorzugteAufgabe != -1 && bevorzugterMitarbeiter!= -1) {
 
           System.out.println(
-              "[*] Arbeiter " + (arbeiter + 1) + " -> Aufgabe " + (bevorzugteAufgabe + 1) +
-                  " (Gewicht: " + String.format("%.3f", maxAuslastung) + ")");
+              "[*] Arbeiter " + (bevorzugterMitarbeiter + 1) + " -> Aufgabe " + (bevorzugteAufgabe + 1) +
+                  " (Gewicht: " + String.format("%.3f", maxWert) + ")");
+          aufgabeZuweisen[bevorzugteAufgabe] = true;
+          mitarbeiterZuweisen[bevorzugterMitarbeiter]= true;
 
-          if (auslastung[arbeiter][bevorzugteAufgabe] > 1.0){
-            auslastung[arbeiter][bevorzugteAufgabe] -=1.0;
+          if (auslastung[bevorzugterMitarbeiter][bevorzugteAufgabe] > 1.0){
+            auslastung[bevorzugterMitarbeiter][bevorzugteAufgabe] -=1.0;
           } else {
-            auslastung[arbeiter][bevorzugteAufgabe] = 0;
+            auslastung[bevorzugterMitarbeiter][bevorzugteAufgabe] = 0;
 
           }
         }
-
       }
 
       System.out.println("Auslastungsmatrix nach der Zuweisung (Tag" +tag+"):");
@@ -116,8 +122,8 @@ public class GreedyAlgorithmus{
 
 
     System.out.println("die Orginale Matrix :");
-    orginaleauslastungAusgaben(originaleAuslastung, mitarbeiter,aufgaben);
-    System.out.println("die Maximale Auslastung:" +  maximaleAuslastung);
+    auslastungAusgaben(originaleAuslastung, mitarbeiter,aufgaben);
+    System.out.println("die Maximale Auslastung:" + String.format("%.3f", maximaleAuslastung));
 
   }
 
@@ -131,21 +137,6 @@ public class GreedyAlgorithmus{
       System.out.print("Mitarbeiter "+(arbeiter+1)+ "\t");
       for (int aufgabe =0; aufgabe<aufgaben; aufgabe++){
         System.out.printf("%.3f\t\t", matrix[arbeiter][aufgabe]);
-      }
-      System.out.println();
-    }
-    System.out.println();
-  }
-  public static void orginaleauslastungAusgaben(double[][] matrix, int mitarbeiter, int aufgaben){
-    System.out.print("\t\t\t\t");
-    for (int aufgabe =0; aufgabe< aufgaben; aufgabe++){
-      System.out.print("aufgabe" + (aufgabe+1)+ "\t\t\t\t");
-    }
-    System.out.println();
-    for(int arbeiter =0; arbeiter< mitarbeiter; arbeiter++){
-      System.out.print("Mitarbeiter "+(arbeiter+1)+ "\t");
-      for (int aufgabe =0; aufgabe<aufgaben; aufgabe++){
-        System.out.print( matrix[arbeiter][aufgabe] +"\t\t");
       }
       System.out.println();
     }
@@ -208,5 +199,4 @@ public class GreedyAlgorithmus{
 
     return auslastung;
   }
-
 }
