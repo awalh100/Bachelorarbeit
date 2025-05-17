@@ -1,29 +1,34 @@
 package manuell;
 
-import java.util.Random;
+import java.util.HashSet;
+import java.util.Set;
 
-public class ManuelleAusfüllung {
+public class ManuelleAusfuellung {
   public static void main(String[] args) {
+
     double [][] originaleAuslastung={
-        {0.25, 0.25, 0.25,0.25},
-        {0.25, 0.25, 0.25,0.25},
-        {0.25, 0.25, 0.25,0.25},
-        {0.25, 0.25, 0.25,0.25}
+        {0.33179749303688955, 0.10743564936124392, 0.3288492062455237, 0.23191765135634287},
+        {0.40353911859363345, 0.561378012106575	,0.009048658413007659, 0.02603421088678386},
+        {0.05525970978284576, 0.10329219076177368, 0.15234137106388365, 0.6891067283914969},
+        {0.20935798825070312, 0.2278337999376552, 0.5097666430583521, 0.05304156875328963}
+
+
 
     };
     int mitarbeiter= originaleAuslastung.length;
     int aufgaben = originaleAuslastung[0].length;
-    int tage = 100;
+    int tage = 100 ;
 
     double[][] auslastung= new double[mitarbeiter][aufgaben];
     double[][] letzteAuslastung= new double[mitarbeiter][aufgaben];
     double[][] gesamteAuslastung= new double[mitarbeiter][aufgaben];
 
     double maximaleAuslastung=0;
+
+    Set<String> matchings = new HashSet<>();
+    int [] zugewieseneAufgabe = new int[mitarbeiter];
     for (int tag = 1; tag <= tage; tag++) {
       System.out.println("Tag " + tag + ":");
-
-
 
 
       if (tag == 1) {
@@ -49,6 +54,9 @@ public class ManuelleAusfüllung {
       boolean[] aufgabeZuweisen = new boolean[aufgaben];
       boolean[] mitarbeiterZuweisen = new boolean[mitarbeiter];
 
+      for (int i =0; i < mitarbeiter; i++){
+        zugewieseneAufgabe[i]=-1;
+      }
       for (int arbeiter = 0; arbeiter < mitarbeiter; arbeiter++) {
         int bevorzugteAufgabe = -1;
         int bevorzugterMitarbeiter =-1;
@@ -73,6 +81,7 @@ public class ManuelleAusfüllung {
                   " (Gewicht: " + String.format("%.2f", maxWert) + ")");
           aufgabeZuweisen[bevorzugteAufgabe] = true;
           mitarbeiterZuweisen[bevorzugterMitarbeiter]= true;
+          zugewieseneAufgabe[bevorzugterMitarbeiter]= bevorzugteAufgabe;
 
           if (auslastung[bevorzugterMitarbeiter][bevorzugteAufgabe] > 1.0){
             auslastung[bevorzugterMitarbeiter][bevorzugteAufgabe] -=1.0;
@@ -87,9 +96,6 @@ public class ManuelleAusfüllung {
       auslastungAusgaben(auslastung, mitarbeiter, aufgaben);
 
 
-
-
-
       for (int i = 0; i < mitarbeiter; i++){
         letzteAuslastung[i]= auslastung[i].clone();
       }
@@ -98,10 +104,16 @@ public class ManuelleAusfüllung {
           gesamteAuslastung[i][j] += auslastung[i][j];
         }
       }
+      String matching = "";
+      for (int i =0; i< mitarbeiter;i++){
+       matching +=(zugewieseneAufgabe[i] +1)+ "-";
 
+        }
+
+      matchings.add(matching);
       System.out.println();
 
-      System.out.println();
+
     }
 
 
@@ -110,6 +122,7 @@ public class ManuelleAusfüllung {
     auslastungAusgaben(originaleAuslastung, mitarbeiter,aufgaben);
     System.out.println("die Maximale Auslastung:" + String.format("%.2f", maximaleAuslastung));
 
+    System.out.println("Anzahl der Matchings : "+ matchings.size());
   }
 
   public static void auslastungAusgaben(double[][] matrix, int mitarbeiter, int aufgaben){

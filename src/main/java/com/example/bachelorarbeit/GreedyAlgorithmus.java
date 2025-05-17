@@ -1,6 +1,8 @@
 package com.example.bachelorarbeit;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 
 public class GreedyAlgorithmus{
   public static void main(String[] args) {
@@ -23,7 +25,8 @@ public class GreedyAlgorithmus{
     double[][] gesmteAuslastung = new double[mitarbeiter][aufgaben];
 
     double maximaleAuslastung =0;
-
+    Set<String> matchings = new HashSet<>();
+    int [] zugewieseneAufgabe = new int[mitarbeiter];
 
     for (int tag = 1; tag <= tage; tag++) {
       System.out.println("Tag " + tag + ":");
@@ -77,7 +80,7 @@ public class GreedyAlgorithmus{
 
         if (bevorzugteAufgabe != -1) {
           aufgabeZuweisen[bevorzugteAufgabe] = true;
-
+          zugewieseneAufgabe[arbeiter]= bevorzugteAufgabe;
           System.out.println(
               "[*] Arbeiter " + (arbeiter + 1) + " -> Aufgabe " + (bevorzugteAufgabe + 1) +
                   " (Gewicht: " + String.format("%.3f", maxAuslastung) + ")");
@@ -107,6 +110,13 @@ public class GreedyAlgorithmus{
           gesmteAuslastung[i][j] += auslastung[i][j];
         }
       }
+      String matching = "";
+      for (int i =0; i< mitarbeiter;i++){
+        matching +=(zugewieseneAufgabe[i] +1)+ "-";
+
+      }
+
+      matchings.add(matching);
 
       System.out.println();
 
@@ -117,8 +127,8 @@ public class GreedyAlgorithmus{
 
     System.out.println("die Orginale Matrix :");
     orginaleauslastungAusgaben(originaleAuslastung, mitarbeiter,aufgaben);
-    System.out.println("die Maximale Auslastung:" +  maximaleAuslastung);
-
+    System.out.println("die Maximale Auslastung:" +  String.format("%.3f", maximaleAuslastung));
+    System.out.println("Anzahl der Matchings : "+ matchings.size());
   }
 
   public static void auslastungAusgaben(double[][] matrix, int mitarbeiter, int aufgaben){

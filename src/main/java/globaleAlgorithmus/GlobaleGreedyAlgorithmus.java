@@ -1,7 +1,9 @@
 package globaleAlgorithmus;
 
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 
 public class GlobaleGreedyAlgorithmus {
   public static void main(String[] args) {
@@ -25,7 +27,8 @@ public class GlobaleGreedyAlgorithmus {
 
     double maximaleAuslastung =0;
 
-
+    Set<String> matchings = new HashSet<>();
+    int [] zugewieseneAufgabe = new int[mitarbeiter];
     for (int tag = 1; tag <= tage; tag++) {
       System.out.println("Tag " + tag + ":");
 
@@ -88,6 +91,7 @@ public class GlobaleGreedyAlgorithmus {
                   " (Gewicht: " + String.format("%.3f", maxWert) + ")");
           aufgabeZuweisen[bevorzugteAufgabe] = true;
           mitarbeiterZuweisen[bevorzugterMitarbeiter]= true;
+          zugewieseneAufgabe[bevorzugterMitarbeiter] = bevorzugteAufgabe;
 
           if (auslastung[bevorzugterMitarbeiter][bevorzugteAufgabe] > 1.0){
             auslastung[bevorzugterMitarbeiter][bevorzugteAufgabe] -=1.0;
@@ -113,18 +117,23 @@ public class GlobaleGreedyAlgorithmus {
           gesmteAuslastung[i][j] += auslastung[i][j];
         }
       }
+      String matching = "";
+      for (int i =0; i< mitarbeiter;i++){
+        matching +=(zugewieseneAufgabe[i] +1)+ "-";
 
+      }
+
+      matchings.add(matching);
       System.out.println();
 
-      System.out.println();
     }
 
 
 
     System.out.println("die Orginale Matrix :");
-    auslastungAusgaben(originaleAuslastung, mitarbeiter,aufgaben);
+    orginaleAuslastungAusgaben(originaleAuslastung, mitarbeiter,aufgaben);
     System.out.println("die Maximale Auslastung:" + String.format("%.3f", maximaleAuslastung));
-
+    System.out.println("Anzahl der Matchings : "+ matchings.size());
   }
 
   public static void auslastungAusgaben(double[][] matrix, int mitarbeiter, int aufgaben){
@@ -142,7 +151,21 @@ public class GlobaleGreedyAlgorithmus {
     }
     System.out.println();
   }
-
+  public static void orginaleAuslastungAusgaben(double[][] matrix, int mitarbeiter, int aufgaben){
+    System.out.print("\t\t");
+    for (int aufgabe =0; aufgabe< aufgaben; aufgabe++){
+      System.out.print("aufgabe" + (aufgabe+1)+ "\t");
+    }
+    System.out.println();
+    for(int arbeiter =0; arbeiter< mitarbeiter; arbeiter++){
+      System.out.print("Mitarbeiter "+(arbeiter+1)+ "\t");
+      for (int aufgabe =0; aufgabe<aufgaben; aufgabe++){
+        System.out.print( matrix[arbeiter][aufgabe] + "\t\t");
+      }
+      System.out.println();
+    }
+    System.out.println();
+  }
   public static double berechneMaximaleAuslastung(double[][]auslastung){
     double maxAuslatung = 0;
     for (int i=0; i<auslastung.length; i++){
